@@ -22,7 +22,7 @@ export default async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth/login';
     return NextResponse.redirect(url);
- }
+  }
 
   return NextResponse.next();
 }
@@ -38,5 +38,5 @@ export const config = {
      * - favicon.ico (favicon file)
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
- ],
+  ],
 };
