@@ -1,11 +1,12 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -32,7 +33,8 @@ export const authOptions = {
         }
 
         // Check password (in real app, compare hashed passwords)
-        if (credentials.password !== user.password) {
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) {
           return null;
         }
 
@@ -55,7 +57,10 @@ export const authOptions = {
   pages: {
     signIn: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'default-secret-key',
+  jwt: {
+    maxAge: 60 * 24 * 30, // 30 days
+  },
 };
 
 export const handler = NextAuth(authOptions);

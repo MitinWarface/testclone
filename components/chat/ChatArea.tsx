@@ -13,7 +13,13 @@ export default function ChatArea() {
   ]);
 
   const [newMessage, setNewMessage] = useState('');
-  const wsRef = useRef<WebSocket | null>(null);
+  const wsRef = useRef<any>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -25,8 +31,9 @@ export default function ChatArea() {
     const mockWs = {
       send: (data: string) => {
         console.log('Sending via WebSocket:', data);
-        // Simulate receiving a message back
+        // Simulate receiving a message back after delay
         setTimeout(() => {
+          const parsedData = JSON.parse(data);
           const simulatedMessage = {
             id: (messages.length + 1).toString(),
             user: 'SimulatedUser',
@@ -39,7 +46,7 @@ export default function ChatArea() {
       close: () => {},
     };
     
-    wsRef.current = mockWs as any;
+    wsRef.current = mockWs;
 
     return () => {
       if (wsRef.current) {
@@ -67,10 +74,17 @@ export default function ChatArea() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-gray-700">
       {/* Chat header */}
-      <div className="h-12 px-4 py-3 bg-gray-600 flex items-center justify-between">
+      <div className="h-12 px-4 py-3 bg-gray-600 flex items-center justify-between border-b border-gray-500">
         <h2 className="font-semibold"># general</h2>
         <button className="hover:bg-gray-500 rounded p-1">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -84,21 +98,22 @@ export default function ChatArea() {
         {/* Messages container */}
         <div className="flex-1">
           {messages.map((message) => (
-            <div key={message.id} className="flex mb-4">
-              <div className="mr-3">
+            <div key={message.id} className="flex mb-4 group">
+              <div className="mr-3 shrink-0">
                 <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
-                  <span className="text-lg">U</span>
+                  <span className="text-lg font-medium">{message.user.charAt(0)}</span>
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex items-baseline">
-                  <span className="font-semibold mr-2">{message.user}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline mb-1">
+                  <span className="font-semibold mr-2 text-white">{message.user}</span>
                   <span className="text-xs text-gray-400">{message.timestamp}</span>
                 </div>
-                <p className="text-gray-200">{message.content}</p>
+                <p className="text-gray-200 wrap-break-word">{message.content}</p>
               </div>
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Voice Chat, File Upload, Notifications */}
@@ -110,15 +125,15 @@ export default function ChatArea() {
       </div>
 
       {/* Message input */}
-      <div className="p-4">
+      <div className="p-4 border-t border-gray-600">
         <div className="bg-gray-600 rounded-lg p-2">
-          <input
-            type="text"
+          <textarea
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-400"
-            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+            className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-400 resize-none"
+            rows={1}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>

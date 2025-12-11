@@ -1,6 +1,5 @@
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
-import { Server } from 'http';
+import { WebSocketServer, WebSocket } from 'ws';
+import { createServer, IncomingMessage, Server } from 'http';
 
 let wss: WebSocketServer | null = null;
 let httpServer: Server | null = null;
@@ -11,7 +10,7 @@ export function initWebSocketServer() {
   httpServer = createServer();
   wss = new WebSocketServer({ server: httpServer });
 
-  wss.on('connection', (ws, req) => {
+  wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     console.log('New client connected');
 
     // Send welcome message
@@ -20,7 +19,7 @@ export function initWebSocketServer() {
       message: 'Connected to Discord clone WebSocket server'
     }));
 
-    ws.on('message', (message) => {
+    ws.on('message', (message: Buffer) => {
       console.log('Received:', message.toString());
       
       try {
@@ -41,13 +40,13 @@ export function initWebSocketServer() {
       console.log('Client disconnected');
     });
 
-    ws.on('error', (error) => {
+    ws.on('error', (error: Error) => {
       console.error('WebSocket error:', error);
     });
   });
 
   // Start listening on port 8080
-  const PORT = process.env.WS_PORT || 8080;
+  const PORT = process.env.WS_PORT ? parseInt(process.env.WS_PORT) : 8080;
   httpServer.listen(PORT, () => {
     console.log(`WebSocket server listening on port ${PORT}`);
   });
