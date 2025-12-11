@@ -10,21 +10,21 @@ declare global {
 // Initialize PrismaClient with proper handling for Vercel environment
 let prisma: any;
 
-if (typeof window === 'undefined') {
-  // Use dynamic import to ensure Prisma client is properly initialized in Vercel
-  const { PrismaClient } = require('@prisma/client');
-
-  if (process.env.NODE_ENV === 'production') {
-    if (!global.prisma) {
-      global.prisma = new PrismaClient();
-    }
-    prisma = global.prisma;
-  } else {
-    prisma = new PrismaClient();
+// Create a singleton pattern for PrismaClient to avoid multiple instances during hot reloads
+const getPrismaClient = () => {
+  if (typeof window !== 'undefined') {
+    return null;
   }
-} else {
-  prisma = null;
-}
+
+  if (!global.prisma) {
+    const { PrismaClient } = require('@prisma/client');
+    global.prisma = new PrismaClient();
+  }
+
+  return global.prisma;
+};
+
+prisma = getPrismaClient();
 import bcrypt from 'bcrypt';
 
 
