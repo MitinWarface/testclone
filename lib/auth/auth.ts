@@ -11,20 +11,15 @@ declare global {
 let prisma: any;
 
 // Create a singleton pattern for PrismaClient to avoid multiple instances during hot reloads
-const getPrismaClient = () => {
-  if (typeof window !== 'undefined') {
-    return null;
-  }
-
+if (typeof window === 'undefined') {
   if (!global.prisma) {
     const { PrismaClient } = require('@prisma/client');
     global.prisma = new PrismaClient();
   }
-
-  return global.prisma;
-};
-
-prisma = getPrismaClient();
+  prisma = global.prisma;
+} else {
+  prisma = null;
+}
 import bcrypt from 'bcrypt';
 
 
