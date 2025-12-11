@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a Discord clone application built with Next.js, TypeScript, and Prisma.
+
+## Features
+
+- Real-time chat functionality
+- Channel management
+- Server creation and management
+- User authentication (login/register)
+- Private messaging
+- Voice chat capabilities
+- Responsive design
+- Dark/light theme toggle
 
 ## Getting Started
 
@@ -18,7 +29,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
+
+- `app/` - Main application pages and routes
+- `components/` - Reusable UI components
+- `lib/` - Utility functions and libraries
+- `prisma/` - Database schema and migrations
+- `public/` - Static assets
+- `src/` - Source code files
 
 ## Learn More
 
