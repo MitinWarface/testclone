@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  avatar    String?
+  servers   Server[]  // Added reverse relation
+  messages  Message[] // Added reverse relation
+  memberships ServerMember[] // Added reverse relation
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Server {
+  id        String    @id @default(cuid())
+  name      String
+  icon      String?
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  members   ServerMember[]
+  channels  Channel[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Channel {
+  id        String    @id @default(cuid())
+  name      String
+  type      String    // "text" or "voice"
+  serverId  String
+  server    Server    @relation(fields: [serverId], references: [id])
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id        String    @id @default(cuid())
+  content   String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  channelId String
+  channel   Channel   @relation(fields: [channelId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ServerMember {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  serverId  String
+  server    Server @relation(fields: [serverId], references: [id])
+  role      String // "member", "admin", "moderator"
+  joinedAt  DateTime @default(now())
+}
