@@ -7,20 +7,26 @@ declare global {
   var prisma: any;
 }
 
-let prisma: any;
+// Import PrismaClient dynamically to avoid initialization issues during build
+const getClient = async () => {
+  const { PrismaClient } = await import('@prisma/client');
+  return new PrismaClient();
+};
 
 // Initialize PrismaClient with proper handling for Vercel environment
-if (process.env.NODE_ENV === 'production') {
-  // In production, use a singleton pattern with globalThis
-  if (!global.prisma) {
-    const { PrismaClient } = require('@prisma/client');
-    global.prisma = new PrismaClient();
+let prisma: any;
+
+if (typeof window === 'undefined') {
+  if (process.env.NODE_ENV === 'production') {
+    if (!global.prisma) {
+      global.prisma = getClient();
+    }
+    prisma = global.prisma;
+  } else {
+    prisma = getClient();
   }
-  prisma = global.prisma;
 } else {
-  // In development, create a new instance each time to avoid hot reloading issues
-  const { PrismaClient } = require('@prisma/client');
-  prisma = new PrismaClient();
+  prisma = null;
 }
 import bcrypt from 'bcrypt';
 
