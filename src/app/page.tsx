@@ -6,17 +6,18 @@ import { useSession } from 'next-auth/react';
 
 export default function Home() {
   const router = useRouter();
- const { data: session, status } = useSession();
+ const { data: session, status } = useSession({
+   required: true,
+   onUnauthenticated() {
+     // If no session, redirect to login
+     router.push('/auth/login');
+   }
+ });
 
   useEffect(() => {
-    if (status === 'loading') return; // Do nothing while loading
-
-    if (session) {
+    if (status === 'authenticated' && session) {
       // If user is logged in, redirect to the main app
       router.push('/'); // This will go to the root page.tsx which has the Discord clone UI
-    } else {
-      // If no session, redirect to login
-      router.push('/auth/login');
     }
   }, [session, status, router]);
 
