@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     if (status === 'authenticated' && session) {
       // If user is logged in, redirect to the main app
-      router.push('/'); // This will go to the root page.tsx which has the Discord clone UI
+      router.replace('/'); // This will go to the root page.tsx which has the Discord clone UI
     }
   }, [session, status, router]);
 
