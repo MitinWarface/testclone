@@ -7,23 +7,20 @@ declare global {
   var prisma: any;
 }
 
-// Import PrismaClient dynamically to avoid initialization issues during build
-const getClient = async () => {
-  const { PrismaClient } = await import('@prisma/client');
-  return new PrismaClient();
-};
-
 // Initialize PrismaClient with proper handling for Vercel environment
 let prisma: any;
 
 if (typeof window === 'undefined') {
+  // Use dynamic import to ensure Prisma client is properly initialized in Vercel
+  const { PrismaClient } = require('@prisma/client');
+
   if (process.env.NODE_ENV === 'production') {
     if (!global.prisma) {
-      global.prisma = getClient();
+      global.prisma = new PrismaClient();
     }
     prisma = global.prisma;
   } else {
-    prisma = getClient();
+    prisma = new PrismaClient();
   }
 } else {
   prisma = null;
