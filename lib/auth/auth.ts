@@ -2,8 +2,8 @@ import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
-// Используем сгенерированный клиент напрямую
-import { PrismaClient } from '@prisma/client';
+// Используем сгенерированный клиент по правильному пути
+import { PrismaClient } from '../../src/generated/prisma/client';
 
 declare global {
   // eslint-disable-next-line no-var
