@@ -1,17 +1,15 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '../../src/generated/prisma/client';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
+let prisma: any;
 
-const prisma = globalThis.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
+// Dynamically import PrismaClient to avoid initialization issues on Vercel
+if (typeof window === 'undefined') {
+  const { PrismaClient } = require('@prisma/client');
+  prisma = new PrismaClient();
+} else {
+  prisma = null;
 }
 import bcrypt from 'bcrypt';
 
