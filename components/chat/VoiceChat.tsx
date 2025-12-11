@@ -27,8 +27,9 @@ export default function VoiceChat() {
     connect();
 
     return () => {
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach(track => track.stop());
+      const stream = mediaStreamRef.current;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
       }
     };
   }, []);

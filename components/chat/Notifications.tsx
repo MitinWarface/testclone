@@ -13,7 +13,7 @@ export default function Notifications() {
 
   useEffect(() => {
     const count = notifications.filter(n => !n.read).length;
-    setUnreadCount(count);
+    setUnreadCount(prev => count);
   }, [notifications]);
 
   const markAsRead = (id: string) => {

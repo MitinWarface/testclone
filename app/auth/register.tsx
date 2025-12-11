@@ -21,7 +21,7 @@ export default function RegisterPage() {
       setTimeout(() => {
         router.push('/auth/login');
       }, 1000);
-    } catch (err) {
+    } catch (err: any) {
       setError('An error occurred during registration');
     }
   };

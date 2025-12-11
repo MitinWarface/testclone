@@ -13,13 +13,13 @@ export default function ChatArea() {
   ]);
 
   const [newMessage, setNewMessage] = useState('');
-  const wsRef = useRef<any>(null);
+  const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, messages.length]);
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function ChatArea() {
         console.log('Sending via WebSocket:', data);
         // Simulate receiving a message back after delay
         setTimeout(() => {
-          const parsedData = JSON.parse(data);
+          // const parsedData = JSON.parse(data);
           const simulatedMessage = {
             id: (messages.length + 1).toString(),
             user: 'SimulatedUser',
@@ -46,7 +46,7 @@ export default function ChatArea() {
       close: () => {},
     };
     
-    wsRef.current = mockWs;
+    wsRef.current = mockWs as unknown as WebSocket;
 
     return () => {
       if (wsRef.current) {

@@ -25,7 +25,7 @@ export default function LoginPage() {
         router.push('/');
         router.refresh();
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('An error occurred during login');
     }
   };
@@ -74,7 +74,7 @@ export default function LoginPage() {
             Don't have an account?{' '}
             <button
               onClick={() => router.push('/auth/register')}
-              className="text-blue-400 hover:text-blue-300"
+              className="text-blue-400 hover:text-blue-30"
             >
               Register
             </button>

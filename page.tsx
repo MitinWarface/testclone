@@ -9,7 +9,7 @@ import ResponsiveLayout from './components/ResponsiveLayout';
 
 export default function Home() {
   // State to toggle between server channels and private messages
-  const [activeView, setActiveView] = useState<'server' | 'private'>('server');
+  const [activeView, _setActiveView] = useState<'server' | 'private'>('server');
 
   return (
     <ResponsiveLayout>

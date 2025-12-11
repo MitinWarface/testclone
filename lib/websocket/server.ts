@@ -10,7 +10,7 @@ export function initWebSocketServer() {
   httpServer = createServer();
   wss = new WebSocketServer({ server: httpServer });
 
-  wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+  wss.on('connection', (ws: WebSocket, _req: IncomingMessage) => {
     console.log('New client connected');
 
     // Send welcome message
